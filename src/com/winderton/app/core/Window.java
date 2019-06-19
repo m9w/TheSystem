@@ -100,16 +100,10 @@ public class Window extends Canvas {
 	private void onEvent(Event event) {
 		for (int i = layers.size() - 1; i >= 0 ; i--)
 			layers.get(i).onEvent(event);
-
 	}
 
-	public synchronized void toUp(Layer layer){
-		layers.sort((o1, o2) -> {if (o2==layer)return -1;
-			else return 0;
-
-		});
-
-
+	public void toUp(Layer layer){
+		layers.sort((o1, o2) -> o2==layer?-1:0);
 	}
 
 	public void addLayer(Layer layer) {

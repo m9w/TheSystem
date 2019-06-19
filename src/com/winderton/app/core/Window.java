@@ -9,8 +9,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import javax.swing.JFrame;
 
@@ -26,7 +25,7 @@ public class Window extends Canvas {
 	private BufferStrategy bs;
 	private Graphics g;
 	private JFrame frame;
-	private List<Layer> layers = new ArrayList<Layer>();
+	private List<Layer> layers = new LinkedList<>();
 	
 	
 	public Window(String name, int width, int height) {
@@ -49,13 +48,11 @@ public class Window extends Canvas {
 		
 		
 		addMouseMotionListener(new MouseMotionListener() {
-			
 
 			public void mouseMoved(MouseEvent e) {
 				MouseMotionEvent event = new MouseMotionEvent(e.getX(), e.getY(), false);
 				onEvent(event);
 			}
-			
 
 			public void mouseDragged(MouseEvent e) {
 				MouseMotionEvent event = new MouseMotionEvent(e.getX(), e.getY(), true);
@@ -89,25 +86,32 @@ public class Window extends Canvas {
 		onRender(g);
 		g.dispose();
 		bs.show();
+
+		try { Thread.sleep(3);
+		} catch (InterruptedException ignored) {}
 		
-		try {
-			Thread.sleep(3);
-		} catch (InterruptedException e) {
-		}
-		
-		EventQueue.invokeLater(() -> render());
+		EventQueue.invokeLater(this::render);
 	}
 	
 	private void onRender(Graphics g) {
-		for (int i = 0; i < layers.size(); i++)
-			layers.get(i).onRender(g);
+		for (Layer layer : layers) layer.onRender(g, this);
 	}
 	
 	private void onEvent(Event event) {
 		for (int i = layers.size() - 1; i >= 0 ; i--)
 			layers.get(i).onEvent(event);
+
 	}
-	
+
+	public synchronized void toUp(Layer layer){
+		layers.sort((o1, o2) -> {if (o2==layer)return -1;
+			else return 0;
+
+		});
+
+
+	}
+
 	public void addLayer(Layer layer) {
 		layers.add(layer);
 	}

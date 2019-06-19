@@ -9,8 +9,8 @@ public class MouseButtonEvent extends Event {
 	protected MouseButtonEvent(Type type, int keyCode, int x, int y) {
 		super(type);
 		this.keyCode = keyCode;
-		this.x =x;
-		this.y=y;
+		this.x = x;
+		this.y = y;
 	}
 
 	public int getKeyCode() {
